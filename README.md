@@ -1,6 +1,8 @@
 # pi-skills
 
-These are pi-skills that I use across projects. I like skills as opposed to Take as many as you want :)
+These are pi-skills that I use across projects.
+
+Take as many as you want :)
 
 **brave-search** (thanks @Mario Zechner): Gives my local models a web searching skill. Make sure to set `BRAVE_API_KEY` in your env vars.\
 **browser-tools** (thanks @Mario Zechner): Access to local chrome browser. This can use chrome profiles too.\
