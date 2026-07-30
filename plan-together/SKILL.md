@@ -56,7 +56,7 @@ Use this skill when the user wants to:
 - learn how a process, system, or tool works
 - reason through uncertainty collaboratively
 
-Do not use this skill when the task is already clear and the user simply wants direct implementation.
+Do not use this skill when the task is already clear and the user simply wants direct implementation. If the user has a formed plan, decision, or idea and wants it stress-tested rather than explored, use the `grilling` skill instead.
 
 ## Research posture
 
@@ -118,6 +118,7 @@ Focus on:
 - stating why it fits
 - identifying open questions
 - suggesting next steps
+- offering to stress-test the converged direction with the `grilling` skill
 
 ## Workflow
 
