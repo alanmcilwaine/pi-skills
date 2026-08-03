@@ -1,0 +1,6 @@
+# Local extraction from a registered ASD-STE100 copy. Never commit.
+writing/dictionary.json
+
+# Build artifacts
+writing/disagreements.log
+__pycache__/
