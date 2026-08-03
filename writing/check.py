@@ -35,49 +35,59 @@ QUALIFIER = re.compile(r"^[a-z][a-z &,]*$")
 
 
 def strip_code(text):
-    """Blank out fenced blocks and inline code, preserving line structure."""
+    """Blank out fenced blocks, inline code, and table rows, preserving lines."""
     text = re.sub(r"```.*?```", lambda m: "\n" * m.group(0).count("\n"), text, flags=re.S)
     text = re.sub(r"`[^`]*`", lambda m: " " * len(m.group(0)), text)
+    text = re.sub(r"(?m)^\s*\|.*$", "", text)
     return text
 
 
 def load_glossary():
-    path = HERE / "technical-nouns.txt"
-    if not path.exists():
-        return []
-    return [
-        line.strip()
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip() and not line.startswith("#")
-    ]
+    """Skill-level glossary plus an optional project-level one in the cwd."""
+    phrases = []
+    for path in (HERE / "technical-nouns.txt", Path.cwd() / "technical-nouns.txt"):
+        if path.exists():
+            phrases += [
+                line.strip()
+                for line in path.read_text(encoding="utf-8").splitlines()
+                if line.strip() and not line.startswith("#")
+            ]
+    return phrases
 
 
-def load_entries():
-    """Yield (phrase, key, suggestion, pos_classes). phrase of one word = POS-checked."""
+def load_entries(include_dict):
+    """Yield (phrase, key, suggestion, pos_classes). phrase of one word = POS-checked.
+
+    include_dict: also load the full dictionary (--ste). Default mode uses only
+    the curated substitution table: the anti-slop core.
+    """
     entries = []
-    dict_path = HERE / "dictionary.json"
-    if dict_path.exists():
-        data = json.loads(dict_path.read_text(encoding="utf-8"))
-        for key, val in data.get("unapproved", {}).items():
-            groups = PARENS.findall(key)
-            pos = groups[-1] if groups else ""
-            head = PARENS.sub("", key).strip()
-            if len(groups) >= 2 and QUALIFIER.match(groups[-1]) and QUALIFIER.match(groups[-2]):
-                # little (a little) (adj) -> "a little"; provided (that) (conj) -> "provided that"
-                if head.lower() in groups[-2].lower():
-                    phrase, pos_classes = groups[-2], None
+    if include_dict:
+        dict_path = HERE / "dictionary.json"
+        if dict_path.exists():
+            data = json.loads(dict_path.read_text(encoding="utf-8"))
+            for key, val in data.get("unapproved", {}).items():
+                groups = PARENS.findall(key)
+                pos = groups[-1] if groups else ""
+                head = PARENS.sub("", key).strip()
+                if len(groups) >= 2 and QUALIFIER.match(groups[-1]) and QUALIFIER.match(groups[-2]):
+                    # little (a little) (adj) -> "a little"; provided (that) (conj) -> "provided that"
+                    if head.lower() in groups[-2].lower():
+                        phrase, pos_classes = groups[-2], None
+                    else:
+                        phrase, pos_classes = f"{head} {groups[-2]}", None
+                elif " " in head:
+                    phrase, pos_classes = head, None
                 else:
-                    phrase, pos_classes = f"{head} {groups[-2]}", None
-            elif " " in head:
-                phrase, pos_classes = head, None
-            else:
-                phrase = head
-                pos_classes = set()
-                for p in pos.split("&"):
-                    pos_classes |= POS_MAP.get(p.strip(), set())
-            use = val.get("use", [])
-            suggestion = " | ".join(use) if isinstance(use, list) else str(use)
-            entries.append((phrase.lower(), key, suggestion or "see dictionary", pos_classes))
+                    phrase = head
+                    pos_classes = set()
+                    for p in pos.split("&"):
+                        pos_classes |= POS_MAP.get(p.strip(), set())
+                use = val.get("use", [])
+                suggestion = " | ".join(use) if isinstance(use, list) else str(use)
+                if not suggestion:
+                    suggestion = val.get("note") or "no approved alternative"
+                entries.append((phrase.lower(), key, suggestion, pos_classes))
 
     seen = {e[0] for e in entries}
     ste = (HERE / "ste100.md").read_text(encoding="utf-8").splitlines()
@@ -101,13 +111,28 @@ def spans_for(text, phrase):
     return [(m.start(), m.end()) for m in re.finditer(rf"\b{re.escape(phrase)}\b", text, re.I)]
 
 
+def markdown_lines(text):
+    """One clean line per markdown line: structure markers stripped, and a
+    terminator appended where the line lacks one. Keeps line numbers stable."""
+    out = []
+    for line in text.split("\n"):
+        s = re.sub(r"^\s*#{1,6}\s*", "", line)  # heading hashes
+        s = re.sub(r"^\s*([-*+]|\d+\.)\s+", "", s)  # list markers
+        s = re.sub(r"^\s*>\s?", "", s)  # blockquote
+        s = s.rstrip()
+        if s and not s.endswith((".", "!", "?")):
+            s += "."
+        out.append(s)
+    return "\n".join(out)
+
+
 def main():
     unknown_mode = "--unknown" in sys.argv
+    ste_mode = "--ste" in sys.argv
     path_arg = next((a for a in sys.argv[1:] if not a.startswith("--")), None)
     raw = Path(path_arg).read_text(encoding="utf-8") if path_arg else sys.stdin.read()
     text = strip_code(raw)
-    # Headings have no terminator; give them one so sentences do not glue together.
-    text = re.sub(r"^(#{1,6}\s.*)$", r"\1.", text, flags=re.M)
+    text = markdown_lines(text)
     line_starts = [m.start() for m in re.finditer(r"^", text, re.M)] or [0]
     line_of = lambda idx: bisect(line_starts, idx)
 
@@ -121,7 +146,7 @@ def main():
         for start, end in spans_for(text, phrase):
             claimed.append((start, end))  # technical nouns never flag
 
-    entries = load_entries()
+    entries = load_entries(ste_mode)
     nlp = spacy.load("en_core_web_sm", disable=["ner"])
 
     # Phrase entries first (regex on text); single words afterwards (POS-checked).
@@ -140,6 +165,7 @@ def main():
         by_word.setdefault(phrase, []).append((key, suggestion, pos_classes))
 
     doc = nlp(text)
+    line_docs = list(nlp.pipe(text.split("\n")))
     for token in doc:
         word = token.lemma_.lower()
         for key, suggestion, pos_classes in by_word.get(word, by_word.get(token.lower_, [])):
@@ -154,12 +180,13 @@ def main():
         o = ord(ch)
         if 0x1F000 <= o <= 0x1FAFF or 0x2600 <= o <= 0x27BF or o == 0xFE0F:
             findings.append((line_of(i), "emoji (house rule)"))
-    for sent in doc.sents:
-        words = [t for t in sent if not t.is_punct]
-        if len(words) > 25:
-            findings.append(
-                (line_of(sent.start_char), f"{len(words)}-word sentence (max 20 for instructions, 25 for descriptions)")
-            )
+    for i, line_doc in enumerate(line_docs):
+        for sent in line_doc.sents:
+            words = [t for t in sent if not t.is_punct]
+            if len(words) > 25:
+                findings.append(
+                    (i + 1, f"{len(words)}-word sentence (max 20 for instructions, 25 for descriptions)")
+                )
 
     findings.sort()
     for line, message in findings:

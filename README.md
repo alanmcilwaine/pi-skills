@@ -9,4 +9,5 @@ Take as many as you want :)
 **grilling** (thanks @mattpocock): Relentless one-question-at-a-time interview that stress-tests a plan, decision, or idea until you reach shared understanding.\
 **plan-together**: Planning inspired by superpowers brainstorm. More focused on the learning side of it, than creating a crisp plan.\
 **simply-cli**: I don't like the default bash/cli scripts that local models produce. This is a skill to clean up a lot of the rough edges.\
-**willfully-skill**: A skill to create skills.
+**willfully-skill**: A skill to create skills.\
+**writing** (thanks @tamng0905): Drafts and polishes prose with Orwell's six rules and ASD-STE100 plain English.

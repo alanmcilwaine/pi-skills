@@ -41,7 +41,7 @@ Navigate to URLs. Use `--new` flag to open in a new tab instead of reusing curre
 {baseDir}/browser-eval.js 'document.querySelectorAll("a").length'
 ```
 
-Execute JavaScript in the active tab. Code runs in async context. Use this to extract data, inspect page state, or perform DOM operations programmatically.
+Execute JavaScript in the active tab. Code runs in async context. Use this to extract data, inspect page state, or do DOM operations programmatically.
 
 ## Screenshot
 
@@ -49,7 +49,7 @@ Execute JavaScript in the active tab. Code runs in async context. Use this to ex
 {baseDir}/browser-screenshot.js
 ```
 
-Capture current viewport and return temporary file path. Use this to visually inspect page state or verify UI changes.
+Capture current viewport and return temporary file path. Use this to visually inspect page state or make sure UI changes took effect.
 
 ## Pick Elements
 

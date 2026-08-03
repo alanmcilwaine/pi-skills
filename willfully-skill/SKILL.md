@@ -1,6 +1,6 @@
 ---
 name: willfully-skill
-description: Create, review, and refine agent skills for Pi and other Agent Skills-compatible environments. Use when designing a new skill, improving an existing SKILL.md, tightening scope, writing better frontmatter, deciding whether to add helper files, or generating realistic trigger tests for a skill.
+description: Create, review, and refine agent skills for Pi and other Agent Skills-compatible environments. Use when designing a new skill, improving an existing SKILL.md, tightening scope, or writing better frontmatter. Also use when deciding whether to add helper files or generating realistic trigger tests for a skill.
 ---
 
 # Willfully Skill
@@ -285,7 +285,7 @@ Prefer:
 - explicit decisions
 - concrete examples
 - practical defaults
-- minimal but sufficient structure
+- minimal but enough structure
 - British English throughout
 
 Avoid:

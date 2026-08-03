@@ -1,6 +1,6 @@
 ---
 name: writing
-description: Use when an agent is asked to draft, rewrite, edit, review, polish, copyedit, simplify, humanize, or create written prose, including creative writing, essays, posts, scripts, speeches, emails, documentation, product copy, and other style-sensitive text. Apply George Orwell's six rules and ASD-STE100 Simplified Technical English as a plain-English discipline while preserving the user's intended meaning, audience, tone, and explicit constraints.
+description: Use when an agent is asked to draft, rewrite, edit, review, polish, copyedit, simplify, humanize, or create written prose. This includes creative writing, essays, posts, scripts, speeches, emails, documentation, product copy, and other style-sensitive text. Apply George Orwell's six rules and ASD-STE100 Simplified Technical English as a plain-English discipline. Preserve the user's intended meaning, audience, tone, and explicit constraints.
 ---
 
 # Writing

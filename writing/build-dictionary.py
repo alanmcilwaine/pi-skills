@@ -45,6 +45,8 @@ PATCHES = {
     ("unapproved", "discharge (v)"): {"use": ["RELEASE (v)", "GO (v)"]},
     ("unapproved", "regrease (v)"): {"use": ["APPLY (v)", "MORE (adj)"]},
     ("unapproved", "file (v)"): {"use": ["REMOVE (v) (WITH A FILE (TN))"]},  # malformed in source
+    ("unapproved", "big (adj)"): {"use": ["LARGE (adj)"], "note": "If it is possible, give an accurate value."},
+    ("unapproved", "few (adj)"): {"use": ["SMALL NUMBER"], "note": "If it is possible, give an accurate number."},
 }
 
 

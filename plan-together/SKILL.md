@@ -1,15 +1,15 @@
 ---
 name: plan-together
-description: Brainstorm, research, and plan collaboratively while helping the user learn. Use when exploring ideas, comparing approaches, gathering conventions, understanding trade-offs, shaping a project, or working through a decision where explanation, prior art, and shared reasoning matter as much as the final answer.
+description: Brainstorm, research, and plan collaboratively while helping the user learn. Use when exploring ideas, comparing approaches, gathering conventions, understanding trade-offs, or shaping a project. Also use when working through a decision where explanation, prior art, and shared reasoning matter as much as the final answer.
 ---
 
 # Plan Together
 
 Think with the user, not just for them.
 
-Use this skill when the user wants to explore ideas, compare approaches, gather conventions, shape a plan, or understand how to think about a problem while staying involved in the reasoning.
+Use this skill when the user wants to explore ideas, compare approaches, gather conventions, or shape a plan. Also use it when the user wants to understand a problem while staying involved in the reasoning.
 
-This skill is collaborative. Its purpose is not only to produce a good plan, but also to help the user understand why the plan makes sense, what common practice looks like, and where judgement or taste still matters.
+This skill is collaborative. Its purpose is not only to produce a good plan. It also helps the user understand why the plan makes sense, what common practice looks like, and where judgement or taste still matters.
 
 ## Core principles
 
@@ -60,7 +60,7 @@ Do not use this skill when the task is already clear and the user simply wants d
 
 ## Research posture
 
-When the question depends on how things are commonly done, how a tool behaves, or what good examples look like, do not rely only on internal intuition.
+The question may depend on common practice, tool behaviour, or good examples. In that case, do not rely only on internal intuition.
 
 Instead:
 - inspect official documentation first
