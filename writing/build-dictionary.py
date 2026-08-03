@@ -130,7 +130,7 @@ def main():
     approved, unapproved, page_count = build()
 
     lines = ["{"]
-    lines.append('  "source": "ASD-STE100 word list, extracted locally from a registered copy (Unlimited-OCR primary, pdfplumber cross-check). Do not commit.",')
+    lines.append('  "source": "ASD-STE100 word list, extracted from a registered copy (Unlimited-OCR primary, pdfplumber cross-check). Used with permission.",')
     for section, data in (("approved", approved), ("unapproved", unapproved)):
         lines.append(f'  "{section}": {{')
         items = list(data.items())

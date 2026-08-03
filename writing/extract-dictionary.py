@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Extract the ASD-STE100 word list from your own registered spec PDF into dictionary.json.
+"""Extract the ASD-STE100 word list from a registered spec PDF.
 
-Personal, local use only: dictionary.json is gitignored and must never be committed.
+ASD-STE100 content is used with permission.
 Requires: pip install pdfplumber
 Usage:   python extract-dictionary.py "C:/path/to/ASD-STE100_ISSUE9.pdf"
 

@@ -102,7 +102,9 @@ def spans_for(text, phrase):
 
 
 def main():
-    raw = Path(sys.argv[1]).read_text(encoding="utf-8") if len(sys.argv) > 1 else sys.stdin.read()
+    unknown_mode = "--unknown" in sys.argv
+    path_arg = next((a for a in sys.argv[1:] if not a.startswith("--")), None)
+    raw = Path(path_arg).read_text(encoding="utf-8") if path_arg else sys.stdin.read()
     text = strip_code(raw)
     # Headings have no terminator; give them one so sentences do not glue together.
     text = re.sub(r"^(#{1,6}\s.*)$", r"\1.", text, flags=re.M)
@@ -162,6 +164,34 @@ def main():
     findings.sort()
     for line, message in findings:
         print(f"line {line}: {message}")
+
+    if unknown_mode:
+        known = set()
+        dict_path = HERE / "dictionary.json"
+        if dict_path.exists():
+            data = json.loads(dict_path.read_text(encoding="utf-8"))
+            for section in ("approved", "unapproved"):
+                for key, val in data.get(section, {}).items():
+                    known.add(PARENS.sub("", key).strip().lower())
+                    for form in val.get("forms", []):
+                        known.add(form.lower())
+        for phrase in load_glossary():
+            known.update(phrase.lower().split())
+
+        unknown = {}
+        for token in doc:
+            if not token.is_alpha or token.is_stop or len(token.text) < 3:
+                continue
+            lemma = token.lemma_.lower()
+            if lemma not in known and token.lower_ not in known:
+                word = token.lower_
+                prev = unknown.get(word)
+                unknown[word] = (token.pos_, (prev[1] + 1) if prev else 1, prev[2] if prev else line_of(token.idx))
+        if unknown:
+            print("\nunknown words (not in dictionary or glossary; declare as technical nouns or rephrase):")
+            for word, (pos, count, line) in sorted(unknown.items(), key=lambda kv: -kv[1][1]):
+                print(f"  {word} ({pos.lower()}) x{count}, first at line {line}")
+
     print("clean" if not findings else f"{len(findings)} finding(s)")
     sys.exit(1 if findings else 0)
 
